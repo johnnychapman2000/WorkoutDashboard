@@ -495,7 +495,7 @@ const apiUrl =
 async function loadDashboardData() {
 
     const response =
-        await fetch(apiUrl);
+        await fetch("/.netlify/functions/workoutdata");
 
     const data =
         await response.json();
