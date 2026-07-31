@@ -1,8 +1,11 @@
 exports.handler = async function () {
   try {
     const response = await fetch(
-      "https://script.google.com/macros/s/AKfycbz8QUcg9I5DIqAHyN2Vx0t_xODRPZApqtc3bQJm3PSaUn9vuG7-1Q1pNlzISBkBPmM4NA/exec"
-    );
+  "https://script.google.com/macros/s/AKfycbz8QUcg9I5DIqAHyN2Vx0t_xODRPZApqtc3bQJm3PSaUn9vuG7-1Q1pNlzISBkBPmM4NA/exec",
+  {
+    redirect: "follow"
+  }
+);
 
     const data = await response.text();
 
