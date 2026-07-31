@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Workout 2.0</title>
+
+<style>
+
+:root{
+    --bg:#0B1220;
+    --card:#111827;
+    --border:#1F2937;
+    --text:#F9FAFB;
+    --sub:#9CA3AF;
+
+    --blue:#3B82F6;
+    --green:#22C55E;
+    --purple:#A855F7;
+    --orange:#F59E0B;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+}
+
+.container{
+    display:flex;
+    min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+    width:240px;
+    padding:20px;
+    border-right:1px solid var(--border);
+}
+
+.nav-item{
+    padding:16px;
+    margin-bottom:10px;
+    border-radius:12px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.nav-item:hover{
+    background:#18253b;
+}
+
+.nav-item.active{
+    background:#2563EB;
+}
+
+/* MAIN */
+
+.main{
+    flex:1;
+    padding:20px;
+}
+
+/* HEADER */
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+
+    padding:20px 24px;
+    margin-bottom:20px;
+}
+
+.logo{
+    font-size:32px;
+    font-weight:700;
+}
+
+.header-right{
+    display:flex;
+    gap:12px;
+}
+
+.filter{
+    background:#0F172A;
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:12px 18px;
+}
+
+/* KPI */
+
+.kpi-row{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:16px;
+    margin-bottom:20px;
+}
+
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+}
+
+.card-title{
+    font-size:16px;
+    font-weight:700;
+    color:var(--sub);
+    margin-bottom:18px;
+}
+
+.detail-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.card-value{
+    font-size:42px;
+    font-weight:800;
+}
+
+.card-sub{
+    color:var(--sub);
+    margin-top:8px;
+}
+
+.green{color:var(--green);}
+.blue{color:var(--blue);}
+.purple{color:var(--purple);}
+.orange{color:var(--orange);}
+
+/* WORKOUT SECTION */
+
+.middle{
+    display:grid;
+    grid-template-columns:320px 1fr;
+    gap:16px;
+    margin-bottom:20px;
+}
+
+.workout-card,
+.table-card,
+.chart-card,
+.summary-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+}
+
+.workout-card{
+    padding:24px;
+}
+
+.section-title{
+    color:var(--sub);
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+.workout-name{
+    font-size:48px;
+    font-weight:800;
+    margin-bottom:16px;
+}
+
+.workout-details{
+    color:var(--sub);
+    line-height:2;
+}
+
+.table-card{
+    padding:20px;
+}
+
+.table-title{
+    font-size:20px;
+    font-weight:700;
+    color:var(--purple);
+    margin-bottom:20px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    text-align:left;
+    padding:14px;
+    color:var(--sub);
+}
+
+td{
+    padding:14px;
+    border-top:1px solid var(--border);
+}
+
+.up{
+    color:var(--green);
+}
+
+/* CHARTS */
+
+.chart-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-bottom:20px;
+}
+
+.chart-card{
+    padding:20px;
+}
+
+.chart-title{
+    font-size:20px;
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+canvas{
+    height:260px !important;
+}
+
+/* BOTTOM SUMMARY */
+
+.summary-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:16px;
+}
+
+.summary-card{
+    padding:20px;
+}
+
+.summary-title{
+    color:var(--sub);
+    margin-bottom:12px;
+    font-weight:600;
+}
+
+.summary-value{
+    font-size:32px;
+    font-weight:800;
+}
+
+.summary-sub{
+    color:var(--sub);
+    margin-top:5px;
+}
+
+.up{
+    color:#22C55E;
+}
+
+.down{
+    color:#EF4444;
+}
+
+.warning{
+    color:#F59E0B;
+}
+
+.neutral{
+    color:#D1D5DB;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="sidebar">
+
+        <div class="nav-item active">🏠 Dashboard</div>
+        <div class="nav-item">📝 Workouts</div>
+        <div class="nav-item">💪 Exercises</div>
+        <div class="nav-item">📊 Progress</div>
+        <div class="nav-item">📈 Analytics</div>
+        <div class="nav-item">⚙️ Settings</div>
+
+    </div>
+
+    <div class="main">
+
+        <!-- HEADER -->
+
+        <div class="topbar">
+
+            <div class="logo">
+                💪 WORKOUT 2.0
+            </div>
+
+            <div class="header-right">
+
+                <div class="filter">
+                    📅 Jul 22 - Aug 22, 2026
+                </div>
+
+                <div class="filter">
+                    This Month ▼
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- KPI ROW -->
+
+        <div class="kpi-row">
+
+            <div class="card">
+                <div class="card-title">🔥 CURRENT STREAK</div>
+    		<div class="card-value" id="CurrentStreak">0</div>
+                <div class="card-sub">Days</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🏋 WORKOUTS THIS MONTH</div>
+                <div class="card-value" id="WorkoutThisMonth">0</div>
+                <div class="card-sub green" id="WorkoutDiffFromLastMonth">No Data Found</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📈 MONTHLY IMPROVEMENT</div>
+                <div class="card-value purple" id="MonthlyImprovement">No Data</div>
+                <div class="card-sub">vs last month</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📅 DAYS SINCE LAST WORKOUT</div>
+                <div class="card-value" id="DaysSinceLastWorkout">0</div>
+                <div class="card-sub" id="LastWorkoutDate">Unknown</div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">🎯 CURRENT FOCUS</div>
+                <div class="card-value orange" id="WeakestLink">No Data</div>
+                <div class="card-sub">Selected workout</div>
+            </div>
+
+        </div>
+
+        <!-- WORKOUT SECTION -->
+
+        <div class="middle">
+
+            <div class="workout-card">
+
+                <div class="section-title">
+                    TODAY'S WORKOUT
+                </div>
+
+		<div class="workout-name" id="TodayWorkout">No Data</div>
+
+ 		<div class="workout-details">
+		    <div class="detail-row">
+        		<span class="card-title">Volume vs Last Month:</span>
+		        <span class="card-title" id="TargetProgress">No Data</span>
+    		    </div>
+                </div>
+
+		<div class="workout-details">
+		    <div class="detail-row">
+        		<span class="card-title">Days Since Trained:</span>
+		        <span class="card-title" id="LastTrainedDate">No Data</span>
+    		    </div>
+                </div>
+
+		<div class="workout-details">
+		    <div class="detail-row">
+        		<span class="card-title">Last Trained:</span>
+		        <span class="card-title" id="LastTrained">No Data</span>
+    		    </div>
+                </div>
+
+		<div class="workout-details">
+		    <div class="detail-row">
+        		<span class="card-title">Favorite Workout:</span>
+		        <span class="card-title" id="Favorite">No Data</span>
+    		    </div>
+                </div>
+
+            </div>
+
+            <div class="table-card">
+
+	    <div class="table-title" id="ProgressTitle">💪 MONTH OVER MONTH PROGRESS</div>
+	    <table>
+        	<tr>
+	            <th>Workout</th>
+        	    <th>Current Volume</th>
+            	    <th>Previous Volume</th>
+           	    <th>MoM %</th>
+          	    <th>Last Weight</th>
+        	</tr>
+	        <tbody id="WorkoutProgressTable">
+    		<tr>
+                   <td colspan="5">Loading...</td>
+            	</tr>
+	        </tbody>
+	    </table>
+	</div>
+
+        </div>
+
+        <!-- CHARTS -->
+
+        <div class="chart-row">
+
+            <div class="chart-card">
+
+                <div class="chart-title">
+                    📊 CURRENT WORKOUT VOLUME TREND
+                </div>
+
+                <canvas id="volumeChart"></canvas>
+
+            </div>
+
+            <div class="chart-card">
+
+                <div class="chart-title">
+                    💪 CURRENT WORKOUT STRENGTH TREND
+                </div>
+
+                <canvas id="strengthChart"></canvas>
+
+            </div>
+
+        </div>
+
+        <!-- SUMMARY -->
+
+        <div class="summary-row">
+
+            <div class="summary-card">
+                <div class="summary-title">TOTAL WORKOUTS</div>
+                <div class="summary-value">142</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-title">TOTAL VOLUME</div>
+                <div class="summary-value">125,430</div>
+                <div class="summary-sub">lbs lifted</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-title">AVG WORKOUTS / MONTH</div>
+                <div class="summary-value">27.4</div>
+            </div>
+
+            <div class="summary-card">
+                <div class="summary-title">LAST WORKOUT</div>
+                <div class="summary-value">Legs</div>
+                <div class="summary-sub">2 days ago</div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+Chart.defaults.color = '#9CA3AF';
+
+new Chart(document.getElementById('volumeChart'),{
+
+    type:'line',
+
+    data:{
+        labels:['Mar','Apr','May','Jun','Jul','Aug'],
+        datasets:[{
+            data:[8500,9800,10400,11200,12500,14100],
+            borderColor:'#3B82F6',
+            backgroundColor:'rgba(59,130,246,0.15)',
+            fill:true,
+            tension:.4
+        }]
+    },
+
+    options:{
+        plugins:{
+            legend:{
+                display:false
+            }
+        }
+    }
+
+});
+
+new Chart(document.getElementById('strengthChart'),{
+
+    type:'line',
+
+    data:{
+        labels:['Mar','Apr','May','Jun','Jul','Aug'],
+        datasets:[{
+            data:[90,95,100,105,110,120],
+            borderColor:'#A855F7',
+            backgroundColor:'rgba(168,85,247,0.15)',
+            fill:true,
+            tension:.4
+        }]
+    },
+
+    options:{
+        plugins:{
+            legend:{
+                display:false
+            }
+        }
+    }
+
+});
+
+</script>
+
+<script>
+
+const apiUrl =
+"https://script.google.com/macros/s/AKfycbz8QUcg9I5DIqAHyN2Vx0t_xODRPZApqtc3bQJm3PSaUn9vuG7-1Q1pNlzISBkBPmM4NA/exec";
+
+async function loadDashboardData() {
+
+    const response =
+        await fetch(apiUrl);
+
+    const data =
+        await response.json();
+
+    const fields = [
+        "CurrentStreak",
+    	"WorkoutThisMonth",
+    	"DaysSinceLastWorkout",
+    	"WeakestLink",
+    	"WorkoutDiffFromLastMonth",
+    	"MonthlyImprovement",
+    	"LastWorkoutDate",
+	"TargetProgress",
+        "LastTrained",
+	"Favorite",
+	"LastTrainedDate",
+	"TodayWorkout"
+    ];
+
+    fields.forEach(field => {
+        const element =
+             document.getElementById(field);
+        if (element) {
+             element.innerText =
+                 data[field];
+        }
+    });
+
+    document.getElementById(
+        "ProgressTitle"
+    ).innerText =
+        `💪 ${data.TodayWorkout.toUpperCase()} MONTH OVER MONTH PROGRESS`;
+
+    const table =
+        document.getElementById(
+            "WorkoutProgressTable"
+        );
+
+    table.innerHTML = "";
+
+    data.WorkoutProgress.forEach(row => {
+
+	let momClass = "neutral";
+	if (row.MoM === "N/A") {
+	    momClass = "warning";
+	} else if (row.MoM.startsWith("-")) {
+	    momClass = "down";
+	} else if (row.MoM === "0.0%") {
+	    momClass = "neutral";
+	} else {
+	    momClass = "up";
+	}
+
+        table.innerHTML += `
+            <tr>
+                <td>${row.Workout}</td>
+                <td>${row.CurrentVolume.toLocaleString()}</td>
+                <td>${row.PreviousVolume.toLocaleString()}</td>
+                <td class="${momClass}">${row.MoM}</td>
+                <td>${row.LastWeight}</td>
+            </tr>
+        `;
+
+    });
+
+}
+
+loadDashboardData();
+
+
+</script>
+
+</body>
+</html>
