@@ -629,13 +629,12 @@ const volumeValues =
         item => item.Volume
     );
 
-new Chart(
+const volumeChart =
     document.getElementById(
         "volumeChart"
-    ),
+    );
 new Chart(
-	volumeChart,
-
+    volumeChart,
     {
         type: "line",
         data: {
