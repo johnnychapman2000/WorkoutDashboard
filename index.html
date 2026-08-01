@@ -473,13 +473,8 @@ canvas{
             </div>
 
             <div class="chart-card">
-
-                <div class="chart-title">
-                    💪 CURRENT WORKOUT STRENGTH TREND
-                </div>
-
+                <div class="chart-title" id="AreaProgressTitle">🎯 WORKOUT AREA PROGRESS</div>
                 <canvas id="strengthChart"></canvas>
-
             </div>
 
         </div>
@@ -656,8 +651,73 @@ new Chart(
         }
     }
 );
-}
+
+const areaLabels =
+    data.AreaProgress.map(
+        item => item.Area
+    );
+
+const areaValues =
+    data.AreaProgress.map(
+        item => item.Percent
+    );
+
+const areaColors =
+    areaValues.map(value => {
+
+        if (value >= 120)
+            return "#22C55E";
+
+        if (value >= 100)
+            return "#10B981";
+
+        if (value >= 80)
+            return "#FACC15";
+
+        if (value >= 50)
+            return "#F97316";
+
+        return "#EF4444";
+
+    });
+
+const strengthChart =
+    document.getElementById(
+        "strengthChart"
+    );
+
+new Chart(
+    strengthChart,
+    {
+        type: "bar",
+        data: {
+            labels: areaLabels,
+            datasets: [{
+                data: areaValues,
+                backgroundColor:
+                    areaColors
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    }
+);
+
+
+
 	
+}
 loadDashboardData();
 
 
