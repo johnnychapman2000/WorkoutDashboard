@@ -466,9 +466,7 @@ canvas{
 
             <div class="chart-card">
 
-                <div class="chart-title">
-                    📊 CURRENT WORKOUT VOLUME TREND
-                </div>
+                <div class="chart-title" id="VolumeTrendTitle">📊 VOLUME TREND</div>
 
                 <canvas id="volumeChart"></canvas>
 
@@ -566,6 +564,7 @@ async function loadDashboardData() {
         "ProgressTitle"
     ).innerText =
         `💪 ${data.TodayWorkout.toUpperCase()} MONTH OVER MONTH PROGRESS`;
+	document.getElementById("VolumeTrendTitle").innerText = `📊 ${data.TodayWorkout.toUpperCase()} VOLUME TREND`;
 
     const table =
         document.getElementById(
