@@ -618,7 +618,8 @@ async function loadDashboardData() {
 			stepsElement.innerText = "⚠ RECORD STEPS";
 		}
 	}
-
+	console.log("VolumeTrend =", data.VolumeTrend);
+	console.log("Keys =", Object.keys(data));
 	const volumeLabels =
     data.VolumeTrend.map(
         item => item.Month
