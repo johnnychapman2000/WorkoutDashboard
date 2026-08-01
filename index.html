@@ -593,6 +593,9 @@ async function loadDashboardData() {
     )
 	){
     	stepsCard.classList.add("steps-alert");
+		if (stepsElement) [
+			stepsElement.innerText = "⚠ RECORD STEPS";
+		]
 	}
 
 }
