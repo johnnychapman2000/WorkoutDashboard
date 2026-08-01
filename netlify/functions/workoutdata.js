@@ -1,7 +1,7 @@
 exports.handler = async function () {
   try {
     const response = await fetch(
-  "https://script.google.com/macros/s/AKfycbyZHAAxeBNF9R3jmyszGFtY4PopkhxLgLqjyUvAc37ypxe-43vSJj2NJogczc5OowHRmQ/exec",
+  "https://script.google.com/macros/s/AKfycby6r82DZwbbx4gfuIQiMoquDG3PzRY5a3xuzyeSqKPl8VtZawR4v1pfSrylw_JwApdqfg/exec",
   {
     redirect: "follow"
   }
