@@ -619,8 +619,46 @@ async function loadDashboardData() {
 		}
 	}
 
-}
+	const volumeLabels =
+    data.VolumeTrend.map(
+        item => item.Month
+    );
 
+const volumeValues =
+    data.VolumeTrend.map(
+        item => item.Volume
+    );
+
+new Chart(
+    document.getElementById(
+        "volumeChart"
+    ),
+    {
+        type: "line",
+        data: {
+            labels: volumeLabels,
+            datasets: [{
+                label: "Volume",
+                data: volumeValues,
+                borderColor: "#3B82F6",
+                backgroundColor:
+                    "rgba(59,130,246,0.15)",
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    }
+);
+}
+	
 loadDashboardData();
 
 
