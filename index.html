@@ -481,32 +481,27 @@ canvas{
 
         <!-- SUMMARY -->
 
-        <div class="summary-row">
-
-            <div class="summary-card">
-                <div class="summary-title">TOTAL WORKOUTS</div>
-                <div class="summary-value">142</div>
-            </div>
-
-            <div class="summary-card">
-                <div class="summary-title">TOTAL VOLUME</div>
-                <div class="summary-value">125,430</div>
-                <div class="summary-sub">lbs lifted</div>
-            </div>
-
-            <div class="summary-card">
-                <div class="summary-title">AVG WORKOUTS / MONTH</div>
-                <div class="summary-value">27.4</div>
-            </div>
-
-            <div class="summary-card">
-                <div class="summary-title">LAST WORKOUT</div>
-                <div class="summary-value">Legs</div>
-                <div class="summary-sub">2 days ago</div>
-            </div>
-
-        </div>
-
+	<div class="summary-row">
+	    <div class="summary-card">
+	        <div class="summary-title">TOTAL WORKOUTS</div>
+	        <div class="summary-value" id="TotalWorkouts">0</div>
+	    </div>
+	    <div class="summary-card">
+	        <div class="summary-title">MONTHLY VOLUME</div>
+	        <div class="summary-value" id="MonthlyVolume">0</div>
+	        <div class="summary-sub">lbs lifted</div>
+	    </div>
+	    <div class="summary-card">
+	        <div class="summary-title">CURRENT YEAR VOLUME</div>
+	        <div class="summary-value" id="YearlyVolume">0</div>
+	        <div class="summary-sub">lbs lifted</div>
+	    </div>
+	    <div class="summary-card">
+	        <div class="summary-title">LAST WORKOUT</div>
+	        <div class="summary-value" id="LastWorkout">No Data</div>
+	        <div class="summary-sub" id="LastWorkoutAgo">No Data</div>
+	    </div>
+	</div>
     </div>
 
 </div>
@@ -522,13 +517,27 @@ canvas{
 const apiUrl =
 "https://script.google.com/macros/s/AKfycbz8QUcg9I5DIqAHyN2Vx0t_xODRPZApqtc3bQJm3PSaUn9vuG7-1Q1pNlzISBkBPmM4NA/exec";
 
+
+<!-- ========================= -->
+2
+<!-- Load Dashboard Data    -->
+3
+<!-- ========================= -->
+
 async function loadDashboardData() {
+	const localTesting = true;
 
-    const response =
-        await fetch("/.netlify/functions/workoutdata");
+	let data;
 
-    const data =
-        await response.json();
+	if (localTesting) {
+ 	   data = await (await fetch("https://script.google.com/macros/s/AKfycbxdqf3s6cisJozXEkFxyWXlM4LxNNfu21x7sdVix_CC7u9CGo3oOCHIITlDD_rw0jHKgw/exec")).json();
+	   console.log(data);
+	} else {
+
+ 	const response = await fetch("/.netlify/functions/workoutdata");
+	   data = await response.json();
+	   console.log(data);
+	}
 
     const fields = [
         "CurrentStreak",
@@ -538,27 +547,35 @@ async function loadDashboardData() {
     	"WorkoutDiffFromLastMonth",
     	"MonthlyImprovement",
     	"LastWorkoutDate",
-		"TargetProgress",
+	"TargetProgress",
         "LastTrained",
-		"Favorite",
-		"LastTrainedDate",
-		"TodayWorkout",
-		"Steps"
+	"Favorite",
+	"LastTrainedDate",
+	"TodayWorkout",
+	"Steps",
+	"MonthlyVolume",
+	"YearlyVolume",
+	"TotalWorkouts",
+	"LastWorkout",
+	"LastWorkoutAgo"
     ];
 
     fields.forEach(field => {
-        const element =
-             document.getElementById(field);
-        if (element) {
-             element.innerText =
-                 data[field];
-        }
+        const element = document.getElementById(field);
+		if (element) {
+    		    let value = data[field];
+		    if (
+		        field === "MonthlyVolume" ||
+		        field === "YearlyVolume"
+    		    ) {
+		    value = Number(value).toLocaleString();
+    		}
+
+    element.innerText = value;
+}
     });
 
-    document.getElementById(
-        "ProgressTitle"
-    ).innerText =
-        `💪 ${data.TodayWorkout.toUpperCase()} MONTH OVER MONTH PROGRESS`;
+    	document.getElementById("ProgressTitle").innerText = `💪 ${data.TodayWorkout.toUpperCase()} EXERCISE PROGRESS`;
 	document.getElementById("VolumeTrendTitle").innerText = `📊 ${data.TodayWorkout.toUpperCase()} VOLUME TREND`;
 
     const table =
@@ -642,7 +659,10 @@ new Chart(
             }]
         },
         options: {
-            responsive: true,
+            	responsive: true,
+		maintainAspectRatio: false,
+	   	layout: {padding: 0
+		},
             plugins: {
                 legend: {
                     display: false
@@ -681,25 +701,34 @@ const areaColors =
 
     });
 
-const strengthChart =
+const areaProgressChart =
     document.getElementById(
         "strengthChart"
     );
 
 new Chart(
-    strengthChart,
+    areaProgressChart,
     {
         type: "bar",
         data: {
             labels: areaLabels,
-            datasets: [{
-                data: areaValues,
-                backgroundColor:
-                    areaColors
-            }]
-        },
+		datasets: [{
+    			label: "Progress",
+    			data: areaValues,
+    			backgroundColor: areaColors
+		},
+		{
+			type: "line",
+    			label: "Goal",
+    			data: areaLabels.map(() => 100),
+    			borderColor: "#FFFFFF",
+    			borderWidth: 2,
+    			pointRadius: 0
+		}]
+	},
         options: {
             responsive: true,
+		maintainAspectRatio: false,
             plugins: {
                 legend: {
                     display: false
@@ -708,7 +737,7 @@ new Chart(
             scales: {
                 y: {
                     beginAtZero: true,
-					max: 150
+					max: 200
                 }
             }
         }
