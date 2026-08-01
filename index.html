@@ -282,6 +282,17 @@ canvas{
     color:#D1D5DB;
 }
 
+.steps-alert{
+    border:2px solid #F59E0B;
+    animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+    0%{box-shadow:0 0 5px #F59E0B;}
+    50%{box-shadow:0 0 20px #F59E0B;}
+    100%{box-shadow:0 0 5px #F59E0B;}
+}
+	
 </style>
 </head>
 
@@ -513,11 +524,12 @@ async function loadDashboardData() {
     	"WorkoutDiffFromLastMonth",
     	"MonthlyImprovement",
     	"LastWorkoutDate",
-	"TargetProgress",
+		"TargetProgress",
         "LastTrained",
-	"Favorite",
-	"LastTrainedDate",
-	"TodayWorkout"
+		"Favorite",
+		"LastTrainedDate",
+		"TodayWorkout",
+		"Steps"
     ];
 
     fields.forEach(field => {
@@ -565,6 +577,23 @@ async function loadDashboardData() {
         `;
 
     });
+
+	const stepsElement =
+    document.getElementById("Steps");
+
+	const stepsCard =
+    document.getElementById("StepsCard");
+
+	if (
+    stepsCard &&
+    (
+        data.Steps === "No Data" ||
+        data.Steps === "" ||
+        data.Steps == null
+    )
+	){
+    	stepsCard.classList.add("steps-alert");
+	}
 
 }
 
