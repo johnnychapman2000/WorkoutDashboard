@@ -1,0 +1,120 @@
+/* ========================================
+   PAGE CONTROLS
+   Tabs / Filters
+   ======================================== */
+
+.tabs,
+.filters{
+	display:flex;
+	gap:8px;
+	margin-bottom:15px;
+}
+
+.tabs .btn,
+.filters .btn{
+	width:auto;
+	flex:1;
+	margin-top:0;
+	padding:12px;
+	border-radius:12px;
+	border:1px solid var(--border);
+	background:var(--card);
+	color:#fff;
+}
+
+.tabs .btn.active,
+.filters .btn.active{
+	background:var(--red);
+	color:#fff;
+	font-weight:700;
+}
+
+
+/* ========================================
+   HISTORY PAGE
+   ======================================== */
+
+.history-row{
+	display:flex;
+	justify-content:space-between;
+}
+
+.history-name{
+	font-weight:700;
+}
+
+.history-muted{
+	color:var(--muted);
+	font-size:.9rem;
+}
+
+.tabs{
+	display:flex;
+	gap:10px;
+	margin-bottom:16px;
+}
+
+.tabs .btn{
+	flex:1;
+	border-radius:12px;
+}
+.history-activity{
+	display:flex;
+	align-items:center;
+	gap:12px;
+
+	padding:14px 16px;
+
+	margin-bottom:8px;
+
+	background:rgba(255,255,255,.03);
+
+	border:1px solid var(--border);
+
+	border-radius:12px;
+
+	cursor:pointer;
+}
+
+.activity-name{
+	flex:1;
+
+	font-weight:600;
+}
+
+.activity-result{
+	min-width:110px;
+
+	text-align:center;
+}
+
+.activity-date{
+	min-width:60px;
+
+	text-align:right;
+
+	color:var(--muted);
+}
+
+/* ========================================
+   STATS PAGE
+   ======================================== */
+
+.stat-label{
+	color:var(--muted);
+	text-align:center;
+}
+
+.stat-value{
+	font-size:2rem;
+	font-weight:700;
+	margin-top:8px;
+	text-align:center;
+}
+
+.stat-small{
+	font-size:1.3rem;
+	font-weight:700;
+	margin-top:8px;
+	text-align:center;
+}

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+
+	<title>Stats</title>
+
+	<link rel="stylesheet" href="styles.css?v=1">
+	<link rel="stylesheet" href="cards.css?v=1">
+	<link rel="stylesheet" href="pages.css?v=1">
+	<script src="api.js"></script>
+	<script src="navigation.js"></script>
+
+</head>
+
+<body>
+
+	<h1 class="page-title">Stats</h1>
+
+<div class="filters">
+  <button id="d" class="btn active" onclick="setPeriod('daily')">
+    Daily
+  </button>
+
+  <button id="m" class="btn" onclick="setPeriod('monthly')">
+    Monthly
+  </button>
+
+  <button id="y" class="btn" onclick="setPeriod('yearly')">
+    Yearly
+  </button>
+</div>
+
+<div class="card">
+	<div class="stat-label">Total Volume</div>
+	<div id="tv" class="stat-value">0 lbs</div>
+</div>
+
+<div class="card">
+	<div class="stat-label">Exercises Logged</div>
+	<div id="ec" class="stat-value">0</div>
+</div>
+
+<div class="card">
+	<div class="stat-label">Workout Days</div>
+	<div id="wd" class="stat-value">0</div>
+</div>
+
+<div class="card">
+	<div class="stat-label">Average Volume</div>
+	<div id="av" class="stat-value">0 lbs</div>
+</div>
+
+<div class="card">
+	<div class="stat-label">Top Exercise</div>
+	<div id="te" class="stat-small">None</div>
+</div>
+
+<div id='quickModal' class='modal'>
+	<div class='content'>
+		<h3>Quick Entry</h3>
+
+		<select id='area' onchange='loadQuickExercises()'>
+			<option>Abs</option>
+			<option>Back</option>
+			<option>Biceps</option>
+			<option>Body</option>
+			<option>Cardio</option>
+			<option>Chest</option>
+			<option>Legs</option>
+			<option>Shoulders</option>
+			<option>Stretching</option>
+			<option>Triceps</option>
+		</select>
+
+		<select id='quickExercise'
+			onchange='quickExerciseChanged()'>
+		</select>
+
+		<div id='quickFields'></div>
+
+		<button class='btn save'
+			onclick='saveQuickEntry()'>
+			Save
+		</button>
+
+		<button class='btn cancel'
+			onclick='quickModal.style.display="none"'>
+			Cancel
+		</button>
+	</div>
+</div>
+	<div id="navigation"></div>
+<script src="profile.js"></script>
+<script src="stats.js"></script>
+<script src="quickEntry.js"></script>
+</body>
+</html>
