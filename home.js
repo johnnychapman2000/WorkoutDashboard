@@ -51,6 +51,10 @@ const w =
 
 	nextWorkout.innerText = next.PlanName;
 
+/* ========================================
+   WORKOUT HISTORY
+   ======================================== */
+
 const hist =
 	await (
 		await fetch(
@@ -63,43 +67,142 @@ const hist =
 		)
 	).json();
 
-	let vol = 0;
+/* ========================================
+   MONTHLY VOLUME
+   Current Month Only
+   ======================================== */
 
-	hist.forEach(x => {
-		vol += Number(x.Volume || 0);
-	});
+const currentMonth =
+	new Date().getMonth();
 
-	monthVolume.innerText =
-		vol.toLocaleString() + ' lbs';
+const currentYear =
+	new Date().getFullYear();
 
-	monthCount.innerText =
-		hist.length + ' Exercises Logged';
+let vol = 0;
+let monthExercises = 0;
 
-	renderTopMuscleGroups(hist);
+hist.forEach(x => {
 
-	renderRecentActivity(hist);
+	if(!x.WorkoutDate){
+		return;
+	}
+
+	const workoutDate =
+		new Date(x.WorkoutDate);
+
+	if(
+		workoutDate.getMonth() === currentMonth &&
+		workoutDate.getFullYear() === currentYear
+	){
+
+		vol +=
+			Number(
+				x.Volume || 0
+			);
+
+		monthExercises++;
+
+	}
+
+});
+
+monthVolume.innerText =
+	vol.toLocaleString() + ' pts';
+
+monthCount.innerText =
+	monthExercises +
+	' Exercises Logged';
+
+/* ========================================
+   DASHBOARD CARDS
+   ======================================== */
+
+renderTopMuscleGroups(hist);
+
+renderRecentActivity(hist);
 
 //renderBattleLines();
+
 renderBattleLines2();
 
-	const dates = [
+renderLeadChase();
+
+renderPreviousMonthResults();
+
+renderMonthComparison();
+
+/* ========================================
+   CURRENT STREAK
+   ======================================== */
+
+const workoutDays =
+	[
+
 		...new Set(
 			hist
 				.map(x =>
-					String(x.WorkoutDate).substring(0,10)
+					String(x.WorkoutDate)
+						.substring(0,10)
 				)
 				.filter(Boolean)
 		)
-	];
+	].sort();
 
-	streak.innerText =
-		'🔥 ' +
-		dates.length +
-		' Day' +
-		(dates.length === 1 ? '' : 's');
+let streakCount = 0;
+
+const latestWorkoutDay =
+	workoutDays.length
+		? workoutDays[
+			workoutDays.length - 1
+		  ]
+		: null;
+
+const parts =
+	latestWorkoutDay.split('-');
+
+const checkDate =
+	new Date(
+		Number(parts[0]),
+		Number(parts[1]) - 1,
+		Number(parts[2])
+	);
+
+while(true){
+
+	const dayText =
+		checkDate.getFullYear() +
+		'-' +
+		String(
+			checkDate.getMonth() + 1
+		).padStart(2,'0') +
+		'-' +
+		String(
+			checkDate.getDate()
+		).padStart(2,'0');
+
+	if(
+		workoutDays.includes(dayText)
+	){
+		streakCount++;
+
+		checkDate.setDate(
+			checkDate.getDate() - 1
+		);
+	}
+	else{
+		break;
+	}
+
 }
 
-renderLeadChase();
+streak.innerText =
+	'🔥 ' +
+	streakCount +
+	' Day' +
+	(streakCount === 1 ? '' : 's');
+}
+
+
 
 function renderTopMuscleGroups(history){
 
@@ -294,6 +397,10 @@ async function renderBattleLines2(){
 
 		data.forEach(x => {
 
+			/* ========================================
+			   BATTLE ROW DATA
+			   ======================================== */
+
 			const leader =
 				x.LeaderUserCode || 'TIE';
 
@@ -360,6 +467,10 @@ async function renderBattleLines2(){
 					x.RightVolume ||
 					0
 				).toLocaleString();
+
+			/* ========================================
+			   BATTLE ROW
+			   ======================================== */
 
 			html += `
 				<div class="battle-line-row">
@@ -507,13 +618,11 @@ async function renderBattleLines2(){
 				<div class="battle-line-footer">
 
 					<span>
-						${totalLeftUser}
-						${monthlyLeftTotal}
+						${totalLeftUser} ${monthlyLeftTotal}
 					</span>
 
 					<span>
-						${totalRightUser}
-						${monthlyRightTotal}
+						${totalRightUser} ${monthlyRightTotal}
 					</span>
 
 				</div>
@@ -535,7 +644,6 @@ async function renderBattleLines2(){
 			'<div class="card-row-value">Battle Lines unavailable</div>';
 	}
 }
-
 /* ========================================
    LEAD CHASE
    ======================================== */
@@ -637,4 +745,414 @@ async function renderLeadChase(){
 		box.innerHTML =
 			'Unable to load';
 	}
+}
+
+/* ========================================
+   MONTH COMPARISON
+   Previous Month vs Current Month
+   Battle Lines Style
+   ======================================== */
+async function renderMonthComparison(){
+
+	const box =
+		document.getElementById(
+			'personalMonthComparison'
+		);
+
+	if(!box){
+		return;
+	}
+
+	try{
+
+		const data =
+			await (
+				await fetch(
+					API +
+					'?action=getPersonalMonthComparison' +
+					'&user=' +
+					getUserCode() +
+					'&t=' +
+					Date.now()
+				)
+			).json();
+
+		const today =
+			new Date();
+
+		const currentMonthLabel =
+			today.toLocaleString(
+				'en-US',
+				{
+					month:'long'
+				}
+			);
+
+		const previousDate =
+			new Date(
+				today.getFullYear(),
+				today.getMonth() - 1,
+				1
+			);
+
+		const previousMonthLabel =
+			previousDate.toLocaleString(
+				'en-US',
+				{
+					month:'long'
+				}
+			);
+
+		const previousMonth =
+			data.PreviousMonth || '';
+
+		const currentMonth =
+			data.CurrentMonth || '';
+
+		let html = `
+
+			<div class="battle-line-header">
+
+				<span>${previousMonthLabel}</span>
+
+				<span>${currentMonthLabel}</span>
+
+			</div>
+
+		`;
+
+		(data.Areas || [])
+			.sort(
+				(a,b) =>
+					b.Difference - a.Difference
+			)
+			.forEach(x => {
+
+				/* ========================================
+				   COMPARISON AREA
+				   ======================================== */
+
+				const previousScore =
+					Number(
+						x.PreviousScore || 0
+					);
+
+				const currentScore =
+					Number(
+						x.CurrentScore || 0
+					);
+
+				const leaderMonth =
+					x.LeaderMonth || 'TIE';
+
+				const pct =
+					Math.min(
+						100,
+						Number(
+							x.LeadPercent || 0
+						)
+					);
+
+				let leftWidth = 0;
+				let rightWidth = 0;
+
+				if(
+					leaderMonth === previousMonth
+				){
+					leftWidth = pct;
+				}
+
+				if(
+					leaderMonth === currentMonth
+				){
+					rightWidth = pct;
+				}
+
+				const diffClass =
+					leaderMonth === previousMonth
+						? 'battle-line-winner-left'
+						: leaderMonth === currentMonth
+							? 'battle-line-winner-right'
+							: 'battle-line-even';
+
+				const diffText =
+					previousScore === currentScore
+						? 'Even'
+						: Number(
+							x.Difference || 0
+						).toLocaleString();
+
+				html += `
+
+					<div class="battle-line-row">
+
+						<div class="battle-line-top">
+
+							<div class="battle-line-area">
+								${x.WorkoutArea}
+							</div>
+
+							<div class="battle-line-diff ${diffClass}">
+								${diffText}
+							</div>
+
+						</div>
+
+						<div class="battle-line-track">
+
+							<div class="battle-line-center"></div>
+
+							<div
+								class="battle-line-fill left"
+								style="width:${leftWidth}%">
+							</div>
+
+							<div
+								class="battle-line-fill right"
+								style="width:${rightWidth}%">
+							</div>
+
+						</div>
+
+						<div class="battle-line-footer">
+
+							<span>
+								${previousScore.toLocaleString()}
+							</span>
+
+							<span>
+								${currentScore.toLocaleString()}
+							</span>
+
+						</div>
+
+					</div>
+
+				`;
+
+			});
+
+		/* ========================================
+		   TOTAL
+		   ======================================== */
+
+		const previousTotal =
+			Number(
+				data.PreviousPoints || 0
+			);
+
+		const currentTotal =
+			Number(
+				data.CurrentPoints || 0
+			);
+
+		const totalDiff =
+			Math.abs(
+				currentTotal -
+				previousTotal
+			);
+
+		const totalCombined =
+			currentTotal +
+			previousTotal;
+
+		const totalPct =
+			totalCombined
+				? Math.round(
+					(totalDiff / totalCombined) * 100
+				)
+				: 0;
+
+		let totalLeftWidth = 0;
+		let totalRightWidth = 0;
+
+		if(previousTotal > currentTotal){
+			totalLeftWidth = totalPct;
+		}
+
+		if(currentTotal > previousTotal){
+			totalRightWidth = totalPct;
+		}
+
+		const totalClass =
+			previousTotal > currentTotal
+				? 'battle-line-winner-left'
+				: currentTotal > previousTotal
+					? 'battle-line-winner-right'
+					: 'battle-line-even';
+
+		html += `
+
+			<div class="battle-line-row">
+
+				<div class="battle-line-top">
+
+					<div class="battle-line-area">
+						TOTAL
+					</div>
+
+					<div class="battle-line-diff ${totalClass}">
+						${totalDiff.toLocaleString()}
+					</div>
+
+				</div>
+
+				<div class="battle-line-track">
+
+					<div class="battle-line-center"></div>
+
+					<div
+						class="battle-line-fill left"
+						style="width:${totalLeftWidth}%">
+					</div>
+
+					<div
+						class="battle-line-fill right"
+						style="width:${totalRightWidth}%">
+					</div>
+
+				</div>
+
+				<div class="battle-line-footer">
+
+					<span>
+						${previousTotal.toLocaleString()}
+					</span>
+
+					<span>
+						${currentTotal.toLocaleString()}
+					</span>
+
+				</div>
+
+			</div>
+
+			<div
+				class="month-label"
+				style="
+					margin-top:10px;
+					text-align:center;
+				">
+
+				${Number(
+					data.PercentComplete || 0
+				)}% of last month
+
+			</div>
+
+		`;
+
+		box.innerHTML = html;
+
+	}
+	catch(err){
+
+		console.error(
+			'Month Comparison failed',
+			err
+		);
+
+		box.innerHTML =
+			'<div class="card-row-value">Month comparison unavailable</div>';
+	}
+}
+
+
+/* ========================================
+   PREVIOUS MONTH RESULTS
+   Previous Month Champion
+   ======================================== */
+
+async function renderPreviousMonthResults(){
+
+	const box =
+		document.getElementById(
+			'previousMonthResults'
+		);
+
+	if(!box){
+		return;
+	}
+
+	try{
+
+		const data =
+			await (
+				await fetch(
+					API +
+					'?action=getPreviousMonthResults' +
+					'&user=' +
+					getUserCode() +
+					'&t=' +
+					Date.now()
+				)
+			).json();
+
+		const winner =
+			data.WinnerUserCode || 'N/A';
+
+		const score =
+			Number(
+				data.WinnerScore || 0
+			).toLocaleString();
+
+		const areasWon =
+			Number(
+				data.AreasWon || 0
+			);
+
+		const totalAreas =
+			Number(
+				data.TotalAreas || 0
+			);
+
+		box.innerHTML = `
+
+			<div class="kpi">
+
+				<div class="kpi-value">
+					${winner}
+				</div>
+
+				<div
+					class="kpi-label"
+					style="
+						margin-top:8px;
+						font-size:18px;
+						font-weight:700;
+						color:#4ea1ff;
+					">
+
+					${score} lbs
+
+				</div>
+
+				<div
+					class="kpi-label"
+					style="
+						margin-top:10px;
+					">
+
+					Won ${areasWon} of ${totalAreas} Areas
+
+				</div>
+
+			</div>
+
+		`;
+
+	}
+	catch(err){
+
+		console.error(
+			'Previous Month Results failed',
+			err
+		);
+
+		box.innerHTML =
+
+			'<div class="card-row-value">Unable to load previous month results</div>';
+
+	}
+
 }
