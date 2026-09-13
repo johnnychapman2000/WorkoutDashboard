@@ -52,6 +52,56 @@
 
 	</div>
 
+<!-- ======================================== -->
+<!-- PERSONAL MONTH COMPARISON -->
+<!-- ======================================== -->
+
+<div class="card personal-month-card clickable-card" onclick="location.href=buildProfileUrl('MonthComparison.html')">
+
+    <div class="card-header">
+        <div class="card-title">
+            ⚔️ My Previous vs Current Month
+        </div>
+    </div>
+
+    <div id="personalMonthComparison">
+
+	<div
+		id="previousMonthWinner" class="kpi-value">
+    		Loading...
+	</div>
+
+        <div class="kpi-label">
+            Current Month Performance
+        </div>
+
+    </div>
+
+</div>
+<!-- ======================================== -->
+
+<!-- ======================================== -->
+<!-- PACE CHECK -->
+<!-- ======================================== -->
+
+<div class="card">
+
+	<div class="card-header">
+		<div class="card-title">
+			📅 Pace Check
+		</div>
+	</div>
+
+	<div
+		id="paceCheckList"
+		class="card-list">
+
+		Loading...
+
+	</div>
+
+</div>
+
 	<!-- ======================================== -->
 	<!-- IMPROVEMENT / DECLINE -->
 	<!-- ======================================== -->
@@ -272,6 +322,8 @@
 				).json();
 
 			renderSummary(data);
+			renderMonthComparison();
+			renderPaceCheck(data);
 			renderComparisonBoard(data);
 			renderImprovement(data);
 			renderNeeded(data);
@@ -632,6 +684,8 @@
 	}
 
 	</script>
+
+<script src="comparison.js?v=1"></script>
 
 </body>
 </html>

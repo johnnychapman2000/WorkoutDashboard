@@ -917,52 +917,84 @@ console.log(
 
 const attentionScores = [];
 
+const paceScores = [];
+
 EXERCISES.forEach(exercise => {
 
 	const exerciseName =
 		exercise.ExerciseName;
 
-const current =
-	currentMonthVolume[exerciseName] || 0;
+	const current =
+		currentMonthVolume[exerciseName] || 0;
 
-const previous =
-	previousMonthVolume[exerciseName] || 0;
+	const previous =
+		previousMonthVolume[exerciseName] || 0;
 
-	let score = 0;
+let score = 0;
 
-if(previous === 0){
-
-	score =
-		current > 0
-			? 100
-			: -100;
-
-}
-else{
-
-	const expected =
-		previous * monthProgress;
-
-	score =
-		Math.round(
-			((current - expected) / expected) * 100
-		);
-
+if(previous > 0){
+	score = Math.round(
+		(current / previous) * 100
+	);
 }
 
-attentionScores.push({
-	ExerciseName: exerciseName,
-	Current: current,
-	Previous: previous,
-	Score: score
-});
-});
 
+	attentionScores.push({
+		ExerciseName: exerciseName,
+		Current: current,
+		Previous: previous,
+		Score: score
+	});
+
+	let pacePercent = 0;
+	let pacePoints = 0;
+
+	if(previous > 0){
+
+		const expected =
+			previous * monthProgress;
+
+		pacePoints =
+			Math.round(
+				current - expected
+			);
+
+		pacePercent =
+			expected > 0
+				?
+				Math.round(
+					(
+						(current - expected)
+						/
+						expected
+					) * 100
+				)
+				: 0;
+
+	}
+
+	paceScores.push({
+		ExerciseName: exerciseName,
+		PacePercent: pacePercent,
+		PacePoints: pacePoints,
+		Current: current,
+		Previous: previous
+	});
+
+});
 
 attentionScores.sort(
 	(a,b) => a.Score - b.Score
 );
 
+paceScores.sort(
+	(a,b) => a.PacePoints - b.PacePoints
+);
+
+const filteredPaceScores =
+	paceScores.filter(
+		x => x.Previous > 0
+	);
 
 
 attentionScores
@@ -1018,6 +1050,35 @@ attentionScores
 			<div class=row onclick='openEx(${ex.ExerciseID})'>
 				<div>${item.ExerciseName}</div>
 				<div class=target>${item.Score}%</div>
+				<div class='dot red'></div>
+			</div>
+		`;
+
+	});
+
+h += '<div class=section>⏱ 10 Most Behind Pace</div>';
+
+filteredPaceScores
+    .slice(0,10)
+    .forEach(item => {
+
+		const ex =
+			exerciseLookup[item.ExerciseName];
+
+		if(!ex){
+			return;
+		}
+
+		h += `
+			<div class=row onclick='openEx(${ex.ExerciseID})'>
+				<div>${item.ExerciseName}</div>
+				<div class=target>
+					${item.PacePercent}% (${
+						item.PacePoints > 0
+							? '+' + item.PacePoints.toLocaleString()
+							: item.PacePoints.toLocaleString()
+					})
+				</div>
 				<div class='dot red'></div>
 			</div>
 		`;
@@ -1082,7 +1143,10 @@ list.innerHTML=h;
 }
 
 catch(e){
-  console.error(e);
+  console.error('ERROR:', e);
+  console.error('STACK:', e.stack);
+
+  alert(e.stack);
 
   list.innerHTML =
     '<div style="color:#ff5757;padding:20px;">' +
