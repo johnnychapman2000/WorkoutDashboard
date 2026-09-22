@@ -29,6 +29,12 @@ const w =
 		15
 	);
 
+console.log(
+    HISTORY.filter(
+        x => String(x.ExerciseName).includes('Bike')
+    )
+);
+
 
 const p =
 	await getCachedData(
@@ -110,7 +116,6 @@ LEADCHASE =
 		)
 	).json();
 
-console.log('LEAD CHASE DATA', LEADCHASE);
 
 EXERCISES =
 	await getCachedData(
@@ -207,27 +212,6 @@ const chaseExercises =
 	EXERCISES.filter(
 		x => x.WorkoutArea === leadArea
 	);
-
-console.log(
-	'LEAD AREA',
-	leadArea
-);
-
-console.log(
-	'CHASE EXERCISES',
-	chaseExercises.map(
-		x => ({
-			Name:x.ExerciseName,
-			Area:x.WorkoutArea
-		})
-	)
-);
-
-
-console.log(
-	'Lead Chase Exercises',
-	chaseExercises
-);
 
 const historyExercises =
 	chaseExercises.filter(e =>
@@ -933,12 +917,24 @@ EXERCISES.forEach(exercise => {
 let score = 0;
 
 if(previous > 0){
-	score = Math.round(
-		(current / previous) * 100
-	);
+    score = Math.round(
+        (current / previous) * 100
+    );
+}
+else if(current > 0){
+    score = 100;
 }
 
 
+if(exerciseName === 'Biking'){
+    console.log(
+        'BIKING SCORE',
+        {
+            current,
+            previous
+        }
+    );
+}
 	attentionScores.push({
 		ExerciseName: exerciseName,
 		Current: current,
@@ -1029,11 +1025,6 @@ const exerciseLookup = {};
 EXERCISES.forEach(ex => {
 	exerciseLookup[ex.ExerciseName] = ex;
 });
-
-console.log(
-	'ACTIVE EXERCISES',
-	EXERCISES.map(x => x.ExerciseName)
-);
 
 attentionScores
 	.slice(0,10)
@@ -1129,10 +1120,12 @@ completedToday.forEach(log => {
 		<div class=row>
 			<div>${log.ExerciseName}</div>
 			<div class=target>
-				${log.Weight
-					? `${log.Sets}×${log.Reps}×${log.Weight}`
-					: `${log.Sets}×${log.Reps}`
-				}
+${log.Distance
+    ? `${log.Distance} ${log.DistanceUnit || ''}`
+    : log.Weight
+        ? `${log.Sets}×${log.Reps}×${log.Weight}`
+        : `${log.Sets}×${log.Reps}`
+}
 			</div>
 			<div class='dot green'></div>
 		</div>
@@ -1186,16 +1179,21 @@ const log=HISTORY.find(x=>
 if(e.ExerciseName === 'Rear Deltoid'){
 
 }
-		if(log){
+if(log){
 
-			if(log.Weight){
-				display=`${log.Sets}×${log.Reps}×${log.Weight}`;
-			}
-			else{
-				display=`${log.Sets}×${log.Reps}`;
-			}
-
-		}
+    if(log.Distance){
+        display =
+            `${log.Distance} ${log.DistanceUnit || ''}`;
+    }
+    else if(log.Weight){
+        display =
+            `${log.Sets}×${log.Reps}×${log.Weight}`;
+    }
+    else{
+        display =
+            `${log.Sets}×${log.Reps}`;
+    }
+}
 
 	}
 
